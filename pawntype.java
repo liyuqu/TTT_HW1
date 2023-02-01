@@ -6,7 +6,7 @@ public enum pawntype {
     private pawntype(String icon){
         this.icon=icon;
     }
-    public String getIcon(){
+    public String geticon(){
         return icon;
     }
 

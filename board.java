@@ -1,6 +1,8 @@
 public class board {
     private int boardsize;//the size will enter
 
+    private int gametimes=0;
+
     pawn[][] realboard;//we set every cell a single one to easily reset them or change them
 
     public board(int boardsize) {
@@ -24,6 +26,7 @@ public class board {
                 realboard[row][col].newGame(); //reset the cell(see function in pawn)
             }
         }
+        gametimes+=1;
     }
 
     //then, for everytime we will need to compute if the game is over
@@ -35,16 +38,12 @@ public class board {
         if (realboard[enterrow][0].isOccupied&&realboard[enterrow][0].cell == pp) {
             boolean ROW = true;
             for (int i = 0; i < boardsize; i++) {
-                if (!realboard[enterrow][i].isOccupied||realboard[enterrow][i].cell != pp) {
+                if (!realboard[enterrow][i].isOccupied || realboard[enterrow][i].cell != pp) {
                     ROW = false;
                 }
             }
-            if (ROW == true) {
-                if (pp == pawntype.O) {
-                    return State.OWin;
-                } else {
-                    return State.Xwin;
-                }
+            if (ROW) {
+                return State.Win;
             }
         }
         // for col
@@ -55,12 +54,8 @@ public class board {
                     COL = false;
                 }
             }
-            if (COL == true) {
-                if (pp == pawntype.O) {
-                    return State.OWin;
-                } else {
-                    return State.Xwin;
-                }
+            if (COL) {
+                return State.Win;
             }
         }
         //then for diag//
@@ -68,16 +63,12 @@ public class board {
             if (enterrow == entercol) {
                 boolean DIG1 = true;
                 for (int i = 0; i < boardsize; i++) {
-                    if (!realboard[i][i].isOccupied||realboard[i][i].cell != pp) {
+                    if (!realboard[i][i].isOccupied || realboard[i][i].cell != pp) {
                         DIG1 = false;
                     }
                 }
-                if (DIG1 == true) {
-                    if (pp == pawntype.O) {
-                        return State.OWin;
-                    } else {
-                        return State.Xwin;
-                    }
+                if (DIG1) {
+                    return State.Win;
                 }
             }
         }
@@ -85,16 +76,12 @@ public class board {
             if (enterrow + entercol == boardsize - 1) {
                 boolean DIG2 = true;
                 for (int i = 0; i < boardsize; i++) {
-                    if (!realboard[i][boardsize - 1 - i].isOccupied||realboard[i][boardsize - 1 - i].cell != pp) {
+                    if (!realboard[i][boardsize - 1 - i].isOccupied || realboard[i][boardsize - 1 - i].cell != pp) {
                         DIG2 = false;
                     }
                 }
-                if (DIG2 == true) {
-                    if (pp == pawntype.O) {
-                        return State.OWin;
-                    } else {
-                        return State.Xwin;
-                    }
+                if (DIG2) {
+                    return State.Win;
                 }
             }
         }
@@ -118,7 +105,7 @@ public class board {
                     bbs -= 1;
                 }
                 if (bbs == 1) {
-                    System.out.println("+-+-");
+                    System.out.println("+-+-+");
                 }
             }
                 for (int j = 0; j < boardsize; j++) {
@@ -141,7 +128,7 @@ public class board {
                         bbss -= 1;
                     }
                     if (bbss == 1) {
-                        System.out.println("+-+-");
+                        System.out.println("+-+-+");
                     }
                 }
 
@@ -149,5 +136,7 @@ public class board {
             System.out.println();
 
         }
-
+        public int NoG(){
+            return gametimes;
+    }
     }

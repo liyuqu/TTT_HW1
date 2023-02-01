@@ -4,7 +4,7 @@ public class Main {
 
     private State state;//the status
 
-    private pawntype currentplayer;//the pawntype of the current player
+    private player currentplayer;//the pawntype of the current player
 
     private static Scanner in = new Scanner(System.in);
 
@@ -15,12 +15,11 @@ public class Main {
 
     private String pp2;//Name of p2
 
-    private int p1w=0;//times of p1w
+    private player player1;
 
-    private int p2w=0;//times of p2w
+    private player player2;
 
-    private int nog=0;//number of games played
-
+    private int order=1;//this defines the current player and number
     public Main(){//Main part, will be called at the bottom
         System.out.println("Welcome to Tic Tac Toe!");
         boolean good=false;
@@ -52,26 +51,21 @@ public class Main {
         while (state == State.Playing) {//still playing
             update();//see below, ask a valid move and update the move and state of play
             if (state!=State.Playing) {
-                if (state == State.Xwin) {
-                    System.out.println(p1 + " Win! Congratulations!");
-                    p1w+=1;
-                    nog+=1;
-                    System.out.println("You have played "+nog+" times:");
-                    System.out.println(p1 + " has won "+ p1w + " times");
-                    System.out.println(p2 + " has won "+ p2w + " times");
-                } else if (state == State.OWin) {
-                    System.out.println(p2 + " Win! Congratulations!");
-                    p2w+=1;
-                    nog+=1;
-                    System.out.println("You have played "+nog+" times:");
-                    System.out.println(p1 + " has won "+ p1w + " times");
-                    System.out.println(p2 + " has won "+ p2w + " times");
+                if (state == State.Win) {
+                    System.out.println(currentplayer.getname() + " Win! Congratulations!");
+                    currentplayer.WIN();
+                    System.out.println("You have played " + board.NoG() + " times:");
+                    System.out.println(player1.getname() + " with (" + player1.getType().geticon()+")"
+                            + " has won "+ player1.getWintime() + " times");
+                    System.out.println(player2.getname() + " with (" + player2.getType().geticon()+")"
+                            + " has won "+ player2.getWintime() + " times");
                 } else if (state == State.Draw) {
                     System.out.println("It's a Draw!");
-                    nog+=1;
-                    System.out.println("You have played "+nog+" times:");
-                    System.out.println(p1 + " has won "+ p1w + " times");
-                    System.out.println(p2 + " has won "+ p2w + " times");
+                    System.out.println("You have played "+board.NoG()+" times:");
+                    System.out.println(player1.getname() + " with (" + player1.getType().geticon()+")"
+                            + " has won "+ player1.getWintime() + " times");
+                    System.out.println(player2.getname() + " with (" + player2.getType().geticon()+")"
+                            + " has won "+ player2.getWintime() + " times");
                 }
                 System.out.println("Do you wanna play again?(y/Y for yes)");
                 String reply=in.next();
@@ -83,13 +77,6 @@ public class Main {
                     System.out.println("Bye!");//after this, our while loop will end, //
                     // so the system will exist, which means end the game//
                 }
-            }else {
-                if (currentplayer==pawntype.X){//if current player is p1, we will change to p2
-                    // ; vice versa//
-                    currentplayer=pawntype.O;
-                }else{
-                    currentplayer=pawntype.X;
-                }
             }
 
         }
@@ -97,25 +84,37 @@ public class Main {
 
     public void initGame() {
         board = new board(boards);
+        player1=new player(1);
+        player2=new player(2);
+        player1.setname(pp1);
+        player2.setname(pp2);
+        player1.setType(pawntype.X);
+        player2.setType(pawntype.O);
     } //set up a new board
 
     public void NewGame() {
         board.newGame();//clear all cells (specific code in board)
-        currentplayer = pawntype.X;//whatever current player is, reset to X
-        //if we change it to O, then we can start with O, so we can change the order if we want
         state = State.Playing;//not end, but playing right now
+        System.out.print("Which order do you want to play? (enter 1 or 2)");
+        int input=in.nextInt();
+        while (input!=1&&input !=2){
+            System.out.print("Wrong order, please try again (1 or 2)");
+            input=in.nextInt();
+        }
+        order=input;
+        if (order==1) {
+            currentplayer = player1;
+        } else{
+            currentplayer = player2;//whatever current player is, reset to player 1 or 2 based on order
+        }
+        //if we change it to O, then we can start with O, so we can change the order if we want
     }
 
     public void update() {//update the board and status of the game after every "valid" move
         boolean valid = false;
         while (!valid) {
-            String icon = currentplayer.getIcon();//get the current player's icon(X or O)
-            String player ;
-            if (icon == "X") {//get player's name for further use
-                player = pp1;
-            } else {
-                player = pp2;
-            }
+            String icon = currentplayer.getType().geticon();//get the current player's icon(X or O)
+            String player= currentplayer.getname();
             System.out.print(player + " with " + icon + ", which location do you want to place?" +
                     " (enter a number from (row[0 to " + (boards - 1) + "]," +
                     " col [0 to " + (boards - 1) + "])");
@@ -126,11 +125,18 @@ public class Main {
                 // is invalid like (-1,0), or the cell entered is already occupied//
                 System.out.println("Not Valid, Please enter another location!");
             } else {
-                state= board.endgame(currentplayer,row,col);//check if the game is over,
+                state= board.endgame(currentplayer.getType(),row,col);//check if the game is over,
                 // if output is not playing, the result will come out and the while loop
                 // will break after this move//
                 board.draw();//even if we win the game, we still need to draw the board out
                 valid=true;
+                if (state==State.Playing){
+                    if (currentplayer==player1){
+                        currentplayer=player2;
+                    } else{
+                        currentplayer=player1;
+                    }
+                }
             }
         }
     }

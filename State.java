@@ -1,2 +1,2 @@
-public enum State {Playing, Xwin, OWin, Draw
+public enum State {Playing, Win, Draw
 }

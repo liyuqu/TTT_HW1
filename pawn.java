@@ -19,7 +19,7 @@ public class pawn {
 
     public void draw() {
         if (this.isOccupied) {
-            icon = this.cell.getIcon();
+            icon = this.cell.geticon();
             System.out.print(icon);//we can use it in board print
         } else {
             System.out.print(" ");
